@@ -1,1 +1,7 @@
+<<<<<<< HEAD
 something new
+=======
+123
+1111
+lesson_10 -1
+>>>>>>> b3b5fad610ad17fd6f399f38d1b91a07e44fd2a6
