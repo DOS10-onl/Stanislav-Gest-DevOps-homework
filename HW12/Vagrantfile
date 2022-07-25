@@ -1,0 +1,94 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.box_check_update = false
+
+  #creating 1st instance - server
+  config.vm.define "server" do |server|
+    server.vm.hostname = "server"
+    server.vm.network "private_network", ip: "192.168.56.10"
+    server.vm.provision "shell", inline: <<-SHELL
+
+      #creating 2 directories 
+      mkdir dir1
+      mkdir dir2
+      #we creating 2 files: 1 small and 1 large in dir1 and dir2 
+      truncate -s 1M dir1/large.file
+      echo "smallfile">> dir2/small.file
+      apt upgrade
+      #installing rsync and configuriring as a server
+      apt-get install -y rsync
+        #configuration of rsync
+        # starting with the machine boot
+      sudo systemctl start rsync
+
+      #creating permissions to change rsync file and enable rsync
+      #sudo chmod 666 /etc/default/rsync
+      #grep -rl 'RSYNC_ENABLE=false' /etc/default(rsync)
+      #grep 'RSYNC_ENABLE=false' -P -R -I -l  * | xargs sed -i 's/RSYNC_ENABLE=false/RSYNC_ENABLE=true/g'
+
+      #creating rules witch files we can synchronize
+      #cat <<\EOF > /etc/rsyncd.conf
+      #max connections = 10
+      #exclude = lost+found/
+      #dont compress   = *.gz *.tgz *.zip *.z *.Z *.rpm *.deb *.bz2 *.rar *.7z *.mp3 *.jpg
+       
+       #   path = /dir1/
+       #  comment = Public folders
+       # read only = yes
+       #    list = yes
+      #    auth users = rsync_d1
+       # hosts allow = localhost 192.168.56.11
+         # hosts deny = *
+      
+     # [data2]
+      #    uid = root
+       #   gid = root
+        #  path = /dir2/
+         # comment = Private folders
+          #read only = yes
+          #list = yes
+          #auth users = rsync_d1, rsync_d2, backup
+          #secrets file = /etc/rsyncd.scrt
+          #hosts allow = localhost 192.168.56.11
+          #hosts deny = *
+      #EOF
+
+      #creating passwordfile for rsync 
+       # cat << EOF > /etc/rsyncd.scrt
+        #rsync_d1:password1
+        #rsync_d2:password2
+        #backup:password3
+        #EOF
+        #sudo chmod 600 /etc/rsyncd.scrt 
+      #restarting services rsync
+        #systemctl restart rsyncd
+        #/etc/init.d/rsync restart
+        #service rsyncd restart
+    SHELL
+  end
+
+  #second instance - client
+  config.vm.define "client" do |client|
+    client.vm.hostname = "client"
+    client.vm.network "private_network", ip: "192.168.56.11"
+    client.vm.provision "shell", inline: <<-SHELL
+      apt upgrade
+      #installing rsync 
+      apt-get install -y rsync
+      #creating rule for coping from server
+      #rsync -avv rsync_d1@192.168.56.10::dir1 /home/copyhere/
+    
+      # starting with the machine bootserver
+    SHELL
+  end
+
+  #starting without GIU and memory 512
+  config.vm.provider "virtualbox" do |vb|
+     vb.gui = false
+     vb.memory = "512"
+  end
+  
+end
