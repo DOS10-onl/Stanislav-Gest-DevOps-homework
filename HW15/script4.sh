@@ -18,5 +18,8 @@ read num
         "0")
         break
         ;;
+        *)
+        echo "Wrong input"
+        ;;
     esac
 done
