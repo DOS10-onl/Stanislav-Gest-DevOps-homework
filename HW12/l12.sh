@@ -9,6 +9,7 @@ echo "1 - $TODAY $TIMENOW" >/home/stas/examples/lesson12/examplelesson12.txt
 echo '2 - $TODAY $TIMENOW' >> /home/stas/examples/lesson12/examplelesson12.txt
 echo `3 - $TODAY $TIMENOW` >> /home/stas/examples/lesson12/examplelesson12.txt
 
+
 # as a string
 a=879
 echo "Значение переменной \"a\" -- $a." >> /home/stas/examples/lesson12/examplelesson12.txt
