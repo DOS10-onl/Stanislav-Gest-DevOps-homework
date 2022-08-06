@@ -8,4 +8,10 @@ echo " current directory consist of $A files"
 find /home/stas/examples/lesson13/ -type f -perm 777 -exec chmod 644 {} \;
 #find all empty files and delete it 
 find /home/stas/examples/lesson13/ -type f -empty -print -delete
-
+# find need files
+rmtext=$(find /home/stas/examples/lesson13 -type f \( ! -iname "*.sh" \))
+# removes all lines except the first one
+for file in $rmtext
+do
+	sed -n -i '1p' "$file"
+done
