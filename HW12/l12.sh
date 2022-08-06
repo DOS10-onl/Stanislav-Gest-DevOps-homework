@@ -23,4 +23,6 @@ read c
 echo -n "Input \"d\" " 
 read d 
 e=$(($c+$d)) 
+
 echo "Значение переменной \"e = c+d\" теперь стало равным: $e">>/home/stas/examples/lesson12/examplelesson12.txt
+
