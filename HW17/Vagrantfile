@@ -1,0 +1,17 @@
+Vagrant.configure("2") do |config|
+    config.vm.box = "ubuntu/bionic64"
+    config.vm.box_check_update = false
+
+  config.vm.network "public_network", auto_config: true
+ # config.vm.network "forwarded_port", host: 8084, host_ip: "127.0.0.1"
+ # config.vm.network "forwarded_port", host: 8085, host_ip: "127.0.0.1"
+
+  config.vm.synced_folder "./files", "/files"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    vb.memory = "1024"
+  end
+
+  config.vm.provision "shell", path: "./conf.sh"
+end
